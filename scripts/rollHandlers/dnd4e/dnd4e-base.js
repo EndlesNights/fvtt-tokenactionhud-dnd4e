@@ -60,18 +60,18 @@ export class RollHandlerBaseDnD4e extends RollHandler {
 
   rollAbilityMacro(event, tokenId, checkId) {
     const actor = super.getActor(tokenId);
-    return game.dnd4eBeta.tokenBarHooks.rollAbility(actor, checkId, event);
+    return game.dnd4e.tokenBarHooks.rollAbility(actor, checkId, event);
   }
 
   rollSkillMacro(event, tokenId, checkId) {
     const actor = super.getActor(tokenId);
-    return game.dnd4eBeta.tokenBarHooks.rollSkill(actor, checkId, event);
+    return game.dnd4e.tokenBarHooks.rollSkill(actor, checkId, event);
   }
 
   rollItemMacro(event, tokenId, itemId) {
     let actor = super.getActor(tokenId);
     let item = super.getItem(actor, itemId);
-    return game.dnd4eBeta.tokenBarHooks.rollItem(actor, item, event);
+    return game.dnd4e.tokenBarHooks.rollItem(actor, item, event);
   }
 
   rollPowerMacro(event, tokenId, itemId) {
@@ -80,16 +80,16 @@ export class RollHandlerBaseDnD4e extends RollHandler {
 
     if (this.needsRecharge(actor, item)) {
       event.currentTarget = { closest : (str) => {return {dataset : { itemId : itemId}}} };
-      game.dnd4eBeta.tokenBarHooks.rechargePower(actor, item, event)
+      game.dnd4e.tokenBarHooks.rechargePower(actor, item, event)
       return;
     }
 
-    return game.dnd4eBeta.tokenBarHooks.rollPower(actor, item, event)
+    return game.dnd4e.tokenBarHooks.rollPower(actor, item, event)
   }
 
   needsRecharge(actor, item) {
     return (
-        item.system.useType === "recharge" && !game.dnd4eBeta.tokenBarHooks.isPowerAvailable(actor, item)
+        item.system.useType === "recharge" && !game.dnd4e.tokenBarHooks.isPowerAvailable(actor, item)
     );
   }
 
@@ -106,25 +106,25 @@ export class RollHandlerBaseDnD4e extends RollHandler {
         token.toggleVisibility();
         break;
       case "saveDialog":
-        game.dnd4eBeta.tokenBarHooks.saveDialog(actor, event)
+        game.dnd4e.tokenBarHooks.saveDialog(actor, event)
         break;
       case "save":
-        game.dnd4eBeta.tokenBarHooks.quickSave(actor, event)
+        game.dnd4e.tokenBarHooks.quickSave(actor, event)
         break;
       case "healDialog":
-        game.dnd4eBeta.tokenBarHooks.healDialog(actor, event)
+        game.dnd4e.tokenBarHooks.healDialog(actor, event)
         break;
       case "initiative":
         await this.performInitiativeMacro(tokenId, event);
         break;
       case "actionPoint":
-        game.dnd4eBeta.tokenBarHooks.actionPoint(actor, event)
+        game.dnd4e.tokenBarHooks.actionPoint(actor, event)
         break;
       case "secondWind":
-        game.dnd4eBeta.tokenBarHooks.secondWind(actor, event)
+        game.dnd4e.tokenBarHooks.secondWind(actor, event)
         break;
       case "deathSave":
-        game.dnd4eBeta.tokenBarHooks.deathSave(actor, event)
+        game.dnd4e.tokenBarHooks.deathSave(actor, event)
         break;
       case "endTurn":
         if (game.combat?.current?.tokenId === tokenId) await game.combat?.nextTurn();

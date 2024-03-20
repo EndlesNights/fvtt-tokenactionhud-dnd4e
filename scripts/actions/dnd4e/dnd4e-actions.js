@@ -26,7 +26,7 @@ export class ActionHandlerDnD4e extends ActionHandler {
   }
 
   async _buildSingleTokenList(token) {
-    if(!game.dnd4eBeta.tokenBarHooks) {
+    if(!game.dnd4e.tokenBarHooks) {
       return this.buildUpgradeAnnouncement();
     }
     const list = this.initializeEmptyActionList();
@@ -74,7 +74,7 @@ export class ActionHandlerDnD4e extends ActionHandler {
   }
 
   _buildMultipleTokenList() {
-    if(!game.dnd4eBeta.tokenBarHooks) {
+    if(!game.dnd4e.tokenBarHooks) {
       return this.buildUpgradeAnnouncement();
     }
     const list = this.initializeEmptyActionList();
@@ -106,14 +106,14 @@ export class ActionHandlerDnD4e extends ActionHandler {
     const actor = token.actor;
     const tokenId = token.id;
     let result = this.initializeEmptyCategory("Features");
-    result.name = this.i18n("DND4EBETA.Features");
+    result.name = this.i18n("DND4E.Features");
     const features = {
-      raceFeats: { label: "DND4EBETA.FeatRace", items: [], dataset: {type: "raceFeats"} },
-      classFeats: { label: "DND4EBETA.FeatClass", items: [], dataset: {type: "classFeats"} },
-      pathFeats: { label: "DND4EBETA.FeatPath", items: [], dataset: {type: "pathFeats"} },
-      destinyFeats: { label: "DND4EBETA.FeatDestiny", items: [], dataset: {type: "destinyFeats"} },
-      feat: { label: "DND4EBETA.FeatLevel", items: [], dataset: {type: "feat"} },
-      ritual: { label: "DND4EBETA.FeatRitual", items: [], dataset: {type: "ritual"} }
+      raceFeats: { label: "DND4E.FeatRace", items: [], dataset: {type: "raceFeats"} },
+      classFeats: { label: "DND4E.FeatClass", items: [], dataset: {type: "classFeats"} },
+      pathFeats: { label: "DND4E.FeatPath", items: [], dataset: {type: "pathFeats"} },
+      destinyFeats: { label: "DND4E.FeatDestiny", items: [], dataset: {type: "destinyFeats"} },
+      feat: { label: "DND4E.FeatLevel", items: [], dataset: {type: "feat"} },
+      ritual: { label: "DND4E.FeatRitual", items: [], dataset: {type: "ritual"} }
     };
     actor.items.forEach((item) => {
       if (Object.keys(features).includes(item.type)) {
@@ -149,7 +149,7 @@ export class ActionHandlerDnD4e extends ActionHandler {
     const actor = token.actor;
     const tokenId = token.id;
     let result = this.initializeEmptyCategory("Inventory");
-    result.name = this.i18n("DND4EBETA.Inventory");
+    result.name = this.i18n("DND4E.Inventory");
     const filterObject = {}
     settings.get("equipmentCategoryList").split(',').forEach((str) => {
       if (str.trim()) {
@@ -157,14 +157,14 @@ export class ActionHandlerDnD4e extends ActionHandler {
       }
     });
     const items = {
-      weapon: { label: "DND4EBETA.ItemTypeWeaponPl", items: []},
-      equipment: { label: "DND4EBETA.ItemTypeEquipmentPl", items: []},
-      consumable: { label: "DND4EBETA.ItemTypeConsumablePl", items: [], subcategories: {}, subcategoryField: "consumableType"},
-      tool: { label: "DND4EBETA.ItemTypeToolPl", items: []},
-      backpack: { label: "DND4EBETA.ItemTypeContainerPl", items: []},
-      loot: { label: "DND4EBETA.ItemTypeLootPl", items: []},
+      weapon: { label: "DND4E.ItemTypeWeaponPl", items: []},
+      equipment: { label: "DND4E.ItemTypeEquipmentPl", items: []},
+      consumable: { label: "DND4E.ItemTypeConsumablePl", items: [], subcategories: {}, subcategoryField: "consumableType"},
+      tool: { label: "DND4E.ItemTypeToolPl", items: []},
+      backpack: { label: "DND4E.ItemTypeContainerPl", items: []},
+      loot: { label: "DND4E.ItemTypeLootPl", items: []},
     };
-    Object.entries(game.dnd4eBeta.config.consumableTypes).forEach((e) => {
+    Object.entries(game.dnd4e.config.consumableTypes).forEach((e) => {
       const subCat = { label: e[1], items : [] }
       items.consumable.subcategories[e[0]] = subCat
     });
@@ -235,14 +235,14 @@ export class ActionHandlerDnD4e extends ActionHandler {
     const tokenId = token.id;
     let allPowers = actor.items.filter((item) => item.type === "power")
     let result = this.initializeEmptyCategory("Powers");
-    result.name = this.i18n("DND4EBETA.Powers");
+    result.name = this.i18n("DND4E.Powers");
     // powerGroupType is not initalised by default
     let groupType = actor.system.powerGroupTypes
     if (!groupType) {
       actor.system.powerGroupTypes = "usage"
       groupType = "usage"
     }
-    const groupings = game.dnd4eBeta.tokenBarHooks.generatePowerGroups(actor)
+    const groupings = game.dnd4e.tokenBarHooks.generatePowerGroups(actor)
     let groupField = "useType"
     switch (groupType) {
       case "action" : groupField = "actionType"
@@ -253,7 +253,7 @@ export class ActionHandlerDnD4e extends ActionHandler {
     }
     // original I had a neat solution doing filtering when building the subcategory, but this did not get things that did not fall into categories and instead got "other"
     if (!groupings.other) {
-      groupings.other = { label: "DND4EBETA.Other", items: [], dataset: {type: "other"} }
+      groupings.other = { label: "DND4E.Other", items: [], dataset: {type: "other"} }
     }
     allPowers.forEach(power => {
       const key = power.system[groupField]
@@ -276,13 +276,13 @@ export class ActionHandlerDnD4e extends ActionHandler {
     let powers = powerList
     if(settings.get("hideUsedPowers")) {
       powers = powers.filter((power) => {
-        return power.system.useType === "recharge" || game.dnd4eBeta.tokenBarHooks.isPowerAvailable(actor, power)
+        return power.system.useType === "recharge" || game.dnd4e.tokenBarHooks.isPowerAvailable(actor, power)
       })
     }
     else {
       // need to poke this to force the available boolean correctly for recharge powers
       powers.forEach((power) => {
-        game.dnd4eBeta.tokenBarHooks.isPowerAvailable(actor, power)
+        game.dnd4e.tokenBarHooks.isPowerAvailable(actor, power)
       })
     }
     const colour = settings.get("forcePowerColours")
@@ -316,7 +316,7 @@ export class ActionHandlerDnD4e extends ActionHandler {
       .map((e) => {
         try {
           let skillId = e[0];
-          let name = abbr ? skillId : game.dnd4eBeta.config.skills[skillId];
+          let name = abbr ? skillId : game.dnd4e.config.skills[skillId];
           name = name.charAt(0).toUpperCase() + name.slice(1);
           let encodedValue = [macroType, token.id, e[0]].join(this.delimiter);
           let icon = this._getProficiencyIcon(skills[skillId].value);
@@ -343,7 +343,7 @@ export class ActionHandlerDnD4e extends ActionHandler {
     let result = this.initializeEmptyCategory("skills");
     let macroType = "skill";
     let abbr = settings.get("abbreviateSkills");
-    let skillsActions = Object.entries(game.dnd4eBeta.config.skills).map((e) => {
+    let skillsActions = Object.entries(game.dnd4e.config.skills).map((e) => {
       let name = abbr ? e[0] : e[1];
       name = name.charAt(0).toUpperCase() + name.slice(1);
       let encodedValue = [macroType, tokenId, e[0]].join(this.delimiter);
@@ -361,7 +361,7 @@ export class ActionHandlerDnD4e extends ActionHandler {
     let result = this.initializeEmptyCategory(categoryId);
     result.name = categoryName;
     let abbr = settings.get("abbreviateSkills");
-    let actions = Object.entries(game.dnd4eBeta.config.abilities).map((e) => {
+    let actions = Object.entries(game.dnd4e.config.abilities).map((e) => {
       if (abilities[e[0]].value === 0) return;
       let name = abbr ? e[0] : e[1];
       name = name.charAt(0).toUpperCase() + name.slice(1);
@@ -380,7 +380,7 @@ export class ActionHandlerDnD4e extends ActionHandler {
   _addMultiAbilities(list, tokenId, categoryId, categoryName, macroType) {
     let cat = this.initializeEmptyCategory(categoryId);
     let abbr = settings.get("abbreviateSkills");
-    let actions = Object.entries(game.dnd4eBeta.config.abilities).map((e) => {
+    let actions = Object.entries(game.dnd4e.config.abilities).map((e) => {
       let name = abbr ? e[0] : e[1];
       name = name.charAt(0).toUpperCase() + name.slice(1);
       let encodedValue = [macroType, tokenId, e[0]].join(this.delimiter);
@@ -407,7 +407,7 @@ export class ActionHandlerDnD4e extends ActionHandler {
     utility.actions.push({
       id: "heal",
       encodedValue: healDialogValue,
-      name: this.i18n("DND4EBETA.Healing"),
+      name: this.i18n("DND4E.Healing"),
     });
     let saveValue = [macroType, token.id, "save"].join(
       this.delimiter
@@ -415,7 +415,7 @@ export class ActionHandlerDnD4e extends ActionHandler {
     utility.actions.push({
       id: "save",
       encodedValue: saveValue,
-      name: this.i18n("DND4EBETA.SavingThrow"),
+      name: this.i18n("DND4E.SavingThrow"),
     });
     let saveDialogValue = [macroType, token.id, "saveDialog"].join(
       this.delimiter
@@ -425,14 +425,14 @@ export class ActionHandlerDnD4e extends ActionHandler {
       encodedValue: saveDialogValue,
       name: this.i18n("Show Save Dialog"),
     });
-    if (game.dnd4eBeta.tokenBarHooks.version >= 2) {
+    if (game.dnd4e.tokenBarHooks.version >= 2) {
       // so long as there is an action point available - as I houserule that you can use more than 1 an encounter
       const shouldShowActionPoint = !settings.get("hideUsedPowers") || actor.system.actionpoints?.value > 0
       if (shouldShowActionPoint) {
         utility.actions.push({
           id: "actionPoint",
           encodedValue: [macroType, token.id, "actionPoint"].join(this.delimiter),
-          name: this.i18n("DND4EBETA.ActionPointUse"),
+          name: this.i18n("DND4E.ActionPointUse"),
         });
       }
       // either should not be hiding used powers, or should not have used 2nd wind
@@ -441,13 +441,13 @@ export class ActionHandlerDnD4e extends ActionHandler {
         utility.actions.push({
           id: "secondWind",
           encodedValue: [macroType, token.id, "secondWind"].join(this.delimiter),
-          name: this.i18n("DND4EBETA.SecondWind"),
+          name: this.i18n("DND4E.SecondWind"),
         });
       }
       utility.actions.push({
         id: "deathSave",
         encodedValue: [macroType, token.id, "deathSave"].join(this.delimiter),
-        name: this.i18n("DND4EBETA.DeathSavingThrow"),
+        name: this.i18n("DND4E.DeathSavingThrow"),
       });
     }
     this._combineSubcategoryWithCategory(
